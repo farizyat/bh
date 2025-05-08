@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sacrificial Animals Marketplace</title>
+<style>
+  /* Reset and base */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff8f0;
+    color: #4b3b2b;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .container {
+    width: 95%;
+    max-width: 900px;
+    margin: 0 auto;
+    flex: 1;
+  }
+  header {
+    background: #8b5e3c;
+    color: #fff;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 2px 5px rgba(139, 94, 60, 0.7);
+  }
+  header h1 {
+    font-family: 'Georgia', serif;
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+    letter-spacing: 2px;
+  }
+  header p {
+    font-style: italic;
+    font-size: 1rem;
+  }
+  main {
+    margin-top: 1rem;
+  }
+  .animal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  .animal-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(139,94,60,0.15);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .animal-card:hover, .animal-card:focus-within {
+    transform: translateY(-7px);
+    box-shadow: 0 8px 20px rgba(139,94,60,0.3);
+  }
+  .animal-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .animal-content {
+    padding: 0.9rem 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .animal-name {
+    font-size: 1.3rem;
+    color: #6e4519;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .animal-description {
+    font-size: 0.9rem;
+    color: #755b3a;
+    margin-bottom: 0.8rem;
+    flex-grow: 1;
+  }
+  .animal-price {
+    font-weight: 700;
+    color: #a24708;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  .order-button {
+    display: inline-block;
+    background-color: #a2561a;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  .order-button:hover, .order-button:focus {
+    background-color: #b66c28;
+    outline: none;
+  }
+
+  section.info {
+    margin: 2rem 0 3rem 0;
+    background: #f4ede6;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px #d6c4a1;
+  }
+  section.info h2 {
+    color: #6e4519;
+    margin-bottom: 0.8rem;
+    font-size: 1.4rem;
+  }
+  section.info p {
+    color: #5a472d;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  footer {
+    background: #8b5e3c;
+    color: #fff;
+    text-align: center;
+    padding: 0.8rem 1rem;
+    border-radius: 15px 15px 0 0;
+    font-size: 0.9rem;
+  }
+  footer a {
+    color: #ffd580;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0 0.3rem;
+  }
+  footer a:hover, footer a:focus {
+    text-decoration: underline;
+  }
+
+  /* Chatbot widget styles */
+  #chat-toggle-button {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #25d366;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+  }
+  #chat-toggle-button:hover, #chat-toggle-button:focus {
+    background-color: #128c3e;
+    outline: none;
+  }
+  #chat-toggle-button svg {
+    fill: white;
+    width: 30px;
+    height: 30px;
+  }
+  #chat-widget {
+    position: fixed;
+    bottom: 90px;
+    right: 25px;
+    width: 320px;
+    max-width: 90vw;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    font-size: 14px;
+    color: #333;
+    max-height: 450px;
+  }
+  #chat-widget header {
+    background-color: #25d366;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #chat-widget header button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.4rem;
+    line-height: 1;
+    font-weight: 700;
+  }
+  #chat-messages {
+    padding: 1rem;
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  .message {
+    margin-bottom: 12px;
+    max-width: 80%;
+    border-radius: 18px;
+    padding: 8px 14px;
+    line-height: 1.3;
+    clear: both;
+    font-size: 0.9rem;
+  }
+  .message.bot {
+    background: #e6f4ea;
+    color: #256d36;
+    float: left;
+  }
+  .message.user {
+    background: #25d366;
+    color: white;
+    float: right;
+  }
+  #chat-input-area {
+    border-top: 1px solid #ddd;
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    align-items: center;
+  }
+  #chat-input {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 18px;
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    outline: none;
+  }
+  #chat-send-btn {
+    background-color: #25d366;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin-left: 8px;
+    border-radius: 18px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: background-color 0.3s ease;
+  }
+  #chat-send-btn:hover, #chat-send-btn:focus {
+    background-color: #128c3e;
+    outline: none;
+  }
+
+  /* Scrollbar styling */
+  #chat-messages::-webkit-scrollbar {
+    width: 6px;
+  }
+  #chat-messages::-webkit-scrollbar-thumb {
+    background: #25d366;
+    border-radius: 3px;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 400px) {
+    header h1 {
+      font-size: 1.4rem;
+    }
+    .animal-price {
+      font-size: 1rem;
+    }
+    .order-button {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+    }
+    section.info h2 {
+      font-size: 1.2rem;
+    }
+    #chat-widget {
+      width: 90vw;
+      bottom: 80px;
+      right: 5vw;
+      max-height: 400px;
+    }
+    #modal {
+      width: 95vw;
+      margin: 5vh auto;
+    }
+  }
+
+  /* Modal styles */
+  #modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+    width: 400px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 1500;
+    display: none;
+    flex-direction: column;
+  }
+  #modal header {
+    background-color: #8b5e3c;
+    color: white;
+    padding: 1rem 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-radius: 14px 14px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #modal header button.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #modal-content {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    color: #4b3b2b;
+    font-size: 1rem;
+  }
+  #modal-content p {
+    margin-bottom: 0.8rem;
+  }
+
+  /* Overlay backdrop for modal */
+  #modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1400;
+    display: none;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>SacriAnimals</h1>
+  <p>Your trusted sacrificial animals marketplace</p>
+</header>
+<div class="container">
+  <main>
+    <section aria-label="Sacrificial Animals for Sale" class="animal-grid">
+      <article class="animal-card" tabindex="0">
+        <img src="https://images.unsplash.com/photo-1522243701706-399e1ce249b5?auto=format&fit=crop&w=600&q=80" alt="Brown goat in pasture" class="animal-image" />
+        <div class="animal-content">
+          <h3 class="animal-name">Sheep</h3>
+          <p class="animal-description">A healthy white sheep, suitable for traditional sacrifices.</p>
+          <div class="animal-price">$150</div>
+          <button class="order-button" aria-label="Detail Produk Sheep" data-animal="sheep">Detail Produk</button>
+        </div>
+      </article>
+      <article class="animal-card" tabindex="0">
+        <img src="https://images.unsplash.com/photo-1522243701706-399e1ce249b5?auto=format&fit=crop&w=600&q=80" alt="Brown goat in pasture" class="animal-image" />
+        <div class="animal-content">
+          <h3 class="animal-name">Goat</h3>
+          <p class="animal-description">Robust brown goat, known for its good health and stature.</p>
+          <div class="animal-price">$180</div>
+          <button class="order-button" aria-label="Detail Produk Goat" data-animal="goat">Detail Produk</button>
+        </div>
+      </article>
+      <article class="animal-card" tabindex="0">
+        <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80" alt="Cow grazing green field" class="animal-image" />
+        <div class="animal-content">
+          <h3 class="animal-name">Cow</h3>
+          <p class="animal-description">Strong and healthy cow, ideal for larger sacrificial needs.</p>
+          <div class="animal-price">$950</div>
+          <button class="order-button" aria-label="Detail Produk Cow" data-animal="cow">Detail Produk</button>
+        </div>
+      </article>
+      <article class="animal-card" tabindex="0">
+        <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783?auto=format&fit=crop&w=600&q=80" alt="Camel standing in desert" class="animal-image" />
+        <div class="animal-content">
+          <h3 class="animal-name">Camel</h3>
+          <p class="animal-description">A majestic camel, traditionally valued and well cared for.</p>
+          <div class="animal-price">$1350</div>
+          <button class="order-button" aria-label="Detail Produk Camel" data-animal="camel">Detail Produk</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="info" aria-label="Information about sacrificial animals">
+      <h2>About Our Animals</h2>
+      <p>All animals are raised with care and inspected to meet quality standards to ensure they are fit for their intended sacrificial purpose. We offer a variety of animals suitable for different customs and requirements. Place your order with confidence and convenience.</p>
+    </section>
+  </main>
+</div>
+<footer>
+  Contact us: 
+  <a href="mailto:info@sacrianimals.example.com">info@sacrianimals.example.com</a> | 
+  <a href="https://twitter.com/sacrianimals" target="_blank" rel="noopener noreferrer">Twitter</a> | 
+  <a href="https://wa.me/081292786941" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">WhatsApp: 081292786941</a>
+</footer>
+
+<!-- Modal overlay and modal -->
+<div id="modal-overlay" tabindex="-1"></div>
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <header>
+    <h2 id="modal-title">Detail Produk</h2>
+    <button class="close-btn" aria-label="Close detail">&times;</button>
+  </header>
+  <div id="modal-content">
+    <!-- Details will be dynamically inserted here -->
+  </div>
+</div>
+
+<!-- Floating Chatbot Button -->
+<button id="chat-toggle-button" aria-label="Open WhatsApp Chat">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.52 3.48a11.78 11.78 0 00-16.63 0A11.78 11.78 0 002 12c0 2.2.68 4.24 1.88 5.92L2 22l4.3-1.84a11.78 11.78 0 005.95 1.45c6.54 0 11.85-5.3 11.85-11.85 0-3.17-1.23-6.15-3.58-8.73zM12 20.35a9.74 9.74 0 01-5.1-1.41l-.35-.22-3.2 1.37 1.35-3.14-.23-.37a9.73 9.73 0 0117.33-8.44 9.59 9.59 0 01-7.53 12.2zm5.29-7.91c-.29-.14-1.69-.83-1.94-.92-.25-.1-.43-.14-.62.14-.18.28-.71.92-.87 1.11-.16.18-.32.2-.6.07-.29-.14-1.22-.45-2.33-1.44-.86-.77-1.44-1.72-1.61-2-.17-.28-.02-.43.13-.57.13-.13.29-.32.44-.48a.785.785 0 00.29-.47c.01-.15 0-.28-.03-.39-.08-.14-.62-1.5-.86-2.05-.23-.54-.46-.47-.62-.48-.16 0-.34 0-.52 0-.18 0-.48.07-.73.35-.25.28-.96.94-.96 2.28 0 1.33.98 2.62 1.12 2.8.14.18 1.92 2.92 4.65 4.1.65.28 1.16.45 1.56.58.66.21 1.26.18 1.74.11.53-.08 1.69-.69 1.93-1.35.24-.67.24-1.24.17-1.35-.07-.11-.25-.18-.53-.32z"/></svg>
+</button>
+
+<!-- Chat widget -->
+<div id="chat-widget" role="dialog" aria-labelledby="chat-title" aria-hidden="true">
+  <header>
+    <span id="chat-title">Chat with SacriAnimals</span>
+    <button id="chat-close-button" aria-label="Close chat">&times;</button>
+  </header>
+  <div id="chat-messages" aria-live="polite" aria-relevant="additions"></div>
+  <form id="chat-form" aria-label="Send a message to SacriAnimals">
+    <div id="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off" required aria-required="true" />
+      <button type="submit" id="chat-send-btn" aria-label="Send message">Send</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Data for each animal details
+  const animalDetails = {
+    sheep: {
+      name: 'Sheep',
+      description: 'A healthy white sheep, suitable for traditional sacrifices.',
+      price: '$150',
+      details: [
+        { label: 'Jenis', value: 'Domba Putih' },
+        { label: 'Ukuran', value: 'Sedang' },
+        { label: 'Berat', value: '40-50 kg' },
+        { label: 'Umur', value: '1-2 tahun' },
+        { label: 'Kondisi', value: 'Sehat dan terawat' }
+      ]
+    },
+    goat: {
+      name: 'Goat',
+      description: 'Robust brown goat, known for its good health and stature.',
+      price: '$180',
+      details: [
+        { label: 'Jenis', value: 'Kambing Coklat' },
+        { label: 'Ukuran', value: 'Sedang' },
+        { label: 'Berat', value: '30-45 kg' },
+        { label: 'Umur', value: '1-2 tahun' },
+        { label: 'Kondisi', value: 'Sehat dan kuat' }
+      ]
+    },
+    cow: {
+      name: 'Cow',
+      description: 'Strong and healthy cow, ideal for larger sacrificial needs.',
+      price: '$950',
+      details: [
+        { label: 'Jenis', value: 'Sapi Perah' },
+        { label: 'Ukuran', value: 'Besar' },
+        { label: 'Berat', value: '500-650 kg' },
+        { label: 'Umur', value: '2-3 tahun' },
+        { label: 'Kondisi', value: 'Sehat dan bugar' }
+      ]
+    },
+    camel: {
+      name: 'Camel',
+      description: 'A majestic camel, traditionally valued and well cared for.',
+      price: '$1350',
+      details: [
+        { label: 'Jenis', value: 'Unta' },
+        { label: 'Ukuran', value: 'Besar' },
+        { label: 'Berat', value: '400-600 kg' },
+        { label: 'Umur', value: '3-5 tahun' },
+        { label: 'Kondisi', value: 'Sehat dan terawat' }
+      ]
+    }
+  };
+
+  // For detail produk buttons open modal with info
+  const detailButtons = document.querySelectorAll('.order-button');
+  const modal = document.getElementById('modal');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalContent = document.getElementById('modal-content');
+  const modalCloseBtn = modal.querySelector('.close-btn');
+
+  function openModal(animalKey) {
+    const animal = animalDetails[animalKey];
+    if (!animal) return;
+
+    let html = `<p><strong>Nama :</strong> ${animal.name}</p>`;
+    html += `<p><strong>Deskripsi :</strong> ${animal.description}</p>`;
+    html += `<p><strong>Harga :</strong> ${animal.price}</p>`;
+    html += `<hr />`;
+    html += `<h3>Detail Produk:</h3>`;
+    html += `<ul>`;
+    animal.details.forEach(d => {
+      html += `<li><strong>${d.label}:</strong> ${d.value}</li>`;
+    });
+    html += `</ul>`;
+
+    modalContent.innerHTML = html;
+    modal.style.display = 'flex';
+    modalOverlay.style.display = 'block';
+    modal.setAttribute('aria-hidden', 'false');
+    modalCloseBtn.focus();
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modalOverlay.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  detailButtons.forEach(button => {
+    button.addEventListener('click', e => {
+      const animalKey = e.currentTarget.getAttribute('data-animal');
+      openModal(animalKey);
+    });
+  });
+
+  modalCloseBtn.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', closeModal);
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.style.display === 'flex') {
+      closeModal();
+    }
+  });
+
+  // Order buttons alert (kept for fallback)
+  // Removed because now Detail Produk shows info, no ordering functionality for now.
+
+  // Chat widget functionality
+  const chatToggleButton = document.getElementById('chat-toggle-button');
+  const chatWidget = document.getElementById('chat-widget');
+  const chatCloseButton = document.getElementById('chat-close-button');
+  const chatMessages = document.getElementById('chat-messages');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+
+  const whatsappNumber = '081292786941';
+
+  // Toggle chat widget visibility
+  function toggleChat(show) {
+    if(show) {
+      chatWidget.style.display = 'flex';
+      chatWidget.setAttribute('aria-hidden', 'false');
+      chatInput.focus();
+      addBotMessage("Hello! How can we assist you today? Feel free to type your message and press Send to chat via WhatsApp.");
+    } else {
+      chatWidget.style.display = 'none';
+      chatWidget.setAttribute('aria-hidden', 'true');
+      chatMessages.innerHTML = '';
+    }
+  }
+
+  chatToggleButton.addEventListener('click', () => {
+    const isVisible = chatWidget.style.display === 'flex';
+    toggleChat(!isVisible);
+  });
+
+  chatCloseButton.addEventListener('click', () => toggleChat(false));
+
+  // Add user message to chat
+  function addUserMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'message user';
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  // Add bot message to chat
+  function addBotMessage(text) {
+    if(chatMessages.lastElementChild && chatMessages.lastElementChild.textContent === text && chatMessages.lastElementChild.classList.contains('bot')) return;
+    const div = document.createElement('div');
+    div.className = 'message bot';
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // On chat form submit - open WhatsApp with message
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if(message === '') return;
+    addUserMessage(message);
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    window.open(whatsappURL, '_blank');
+    chatInput.value = '';
+  });
+
+</script>
+</body>
+</html>
+</content>
+</create_file>
